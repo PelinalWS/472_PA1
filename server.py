@@ -8,7 +8,6 @@ def handle_request(connection, address, real_temp):
     attempts = 0
     # The accepted margin of error is calculated to refrain from calculating them multiple times during the loop
     ten_percent = real_temp * 0.1
-    five_percent = real_temp * 0.05
     # The attmepts count is initialized as 0 on every subsequent connection to a client
     # The while loop is used to limit the attempts to 3
     while attempts < 3:
@@ -23,18 +22,16 @@ def handle_request(connection, address, real_temp):
         # The try catch block is in case the guess is not a number, which would cause an error trying to strip it as a float
         try:
             guess = float(guess)
-            # If the guess is within the 5% tolerance range, the server sends a message of approval 
-            # The connection between server and client is severed and the while loop is broken
-            if abs(guess - real_temp) <= five_percent:
-                connection.send("Correct!".encode())
-                #connection.close()
+            # If the guess is exactly correct, there is a special success message
+            if abs(guess - real_temp) == 0:
+                print(f"Client {address} guessed {guess}, which was the correct temperature.")
+                connection.send("Exactly correct!".encode())
                 break
-            # The assignment was unclear if the client is actually supposed to take this as a success
             # If the guess is within the 10% tolerance range, the server sends a message of approval
             # The connection between server and client is severed and the while loop is broken
             elif abs(guess - real_temp) <= ten_percent:
+                print(f"Client {address} guessed {guess}, which was accepted within the 10% tolerance range of {real_temp}.")
                 connection.send("Correct!".encode())
-                #connection.close()
                 break
             # The attempts count is incremented before the hint is sent to the client
             attempts += 1
@@ -91,10 +88,11 @@ def serve_forever():
         result = handle_request(connection, address, real_temp)
         
         if result == "TERMINATE":
+            print(f"Client {address} requested to end the session.")
             break  # Exit the loop to terminate the server
     server.close()  # Close the server socket
 
-# The running of the file calls the serve_forever function by the magic method
+# The running of the file calls the serve_forever function 
 if __name__ == '__main__':
     serve_forever()
 

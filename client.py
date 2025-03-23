@@ -22,6 +22,7 @@ def main():
         response = client.recv(1024).decode()
         # The list of responses without variations were put in a list of lambda functions to lessen the conditionals
         responses = {
+            "Exactly correct!": lambda: print("Congratulations! You guessed the correct temperature."),
             "Correct!": lambda: print("Congratulations! You guessed the correct temperature."),
             "Lower": lambda: print("Try a lower temperature"),
             "Higher": lambda: print("Try a higher temperature"),
