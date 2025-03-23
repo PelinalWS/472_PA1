@@ -15,7 +15,7 @@ def main():
 
     while True:
         guess = input("Enter your guess (or type 'END' to quit): ")
-        client.sendall(guess.encode())
+        client.send(guess.encode())
         if guess.upper() == "END":
             break
         response = client.recv(1024).decode()

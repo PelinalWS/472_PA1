@@ -9,7 +9,7 @@ def handle_request(connection, address, real_temp):
     while attempts < 3:
         guess = connection.recv(1024).decode()
         if guess.upper() == "END":
-            connection.sendall("Server shutting down.".encode())
+            connection.send("Server shutting down.".encode())
             connection.close()
             return "TERMINATE"  # Signal to terminate the server
         try:
@@ -18,27 +18,27 @@ def handle_request(connection, address, real_temp):
             five_percent = real_temp * 0.05
 
             if abs(guess - real_temp) <= five_percent:
-                connection.sendall("Correct!".encode())
+                connection.send("Correct!".encode())
                 connection.close()
                 break
             elif abs(guess - real_temp) <= ten_percent:
-                connection.sendall("Correct!".encode())
+                connection.send("Correct!".encode())
                 connection.close()
                 break
             attempts += 1
             if attempts >= 3:
                 message = f"Temperature was {real_temp}"
-                connection.sendall(message.encode())
+                connection.send(message.encode())
                 break
             hint = ""
             if guess > real_temp:
                 hint = "Lower"
             else:
                 hint = "Higher"
-            connection.sendall(hint.encode())
+            connection.send(hint.encode())
 
         except ValueError:
-            connection.sendall("Invalid input.".encode())
+            connection.send("Invalid input.".encode())
 
     connection.close()
     print(f"Connection from {address} closed\n")
@@ -68,7 +68,7 @@ def serve_forever():
         real_temp = temperatures[cities.index(city)]
                 
         #Send city name to the client
-        connection.sendall(f"Predict the temperature in {city}:".encode())
+        connection.send(f"Predict the temperature in {city}:".encode())
         
         result = handle_request(connection, address, real_temp)
         
