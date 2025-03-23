@@ -20,7 +20,7 @@ def main():
             break
         response = client.recv(1024).decode()
 
-        actions = {
+        responses = {
             "Correct!": lambda: print("Congratulations! You guessed the correct temperature."),
             "Lower": lambda: print("Try a lower temperature"),
             "Higher": lambda: print("Try a higher temperature"),
@@ -33,8 +33,8 @@ def main():
         elif response == "Connection closed":
             print("Connection closed")
             break
-        elif response in actions:
-            actions[response]()
+        elif response in responses:
+            responses[response]()
             if response == "Correct!":
                 break
     client.close()
